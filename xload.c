@@ -29,6 +29,29 @@ other dealings in this Software without prior written authorization
 from the X Consortium.
 
 */
+/*
+ * Copyright © 2000 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 
 /*
  * xload - display system load average in a window
@@ -49,6 +72,9 @@ from the X Consortium.
 #include <X11/Xaw/StripChart.h>
 #include <X11/Xmu/SysUtil.h>
 #include "xload.h"
+
+#include <libintl.h>
+#include <X11/Xlocale.h>
 
 #include "xload.bit"
 
@@ -109,32 +135,32 @@ static int light_update = 10 * 1000;
 
 static void usage(void)
 {
-    fprintf (stderr, "usage:  %s [-options ...]\n\n", ProgramName);
-    fprintf (stderr, "where options include:\n");
-    fprintf (stderr,
-      "    -display dpy            X server on which to display\n");
-    fprintf (stderr,
-      "    -geometry geom          size and location of window\n");
-    fprintf (stderr, 
-      "    -fn font                font to use in label\n");
-    fprintf (stderr, 
-      "    -scale number           minimum number of scale lines\n");
-    fprintf (stderr, 
-      "    -update seconds         interval between updates\n");
-    fprintf (stderr,
-      "    -label string           annotation text\n");
-    fprintf (stderr, 
-      "    -bg color               background color\n");
-    fprintf (stderr, 
-      "    -fg color               graph color\n");
-    fprintf (stderr, 
-      "    -hl color               scale and text color\n");
-    fprintf (stderr, 
-      "    -nolabel                removes the label from above the chart.\n");
-    fprintf (stderr, 
-      "    -jumpscroll value       number of pixels to scroll on overflow\n");
-    fprintf (stderr,
-      "    -remote host            remote host to monitor\n");
+    fprintf (stderr, gettext("usage:  %s [-options ...]\n\n"), ProgramName);
+    fprintf (stderr, gettext("where options include:\n"));
+    fprintf (stderr, "    -display %s",
+             gettext("display        X server on which to display\n"));
+    fprintf (stderr, "    -geometry %s",
+             gettext("geometry      size and location of window\n"));
+    fprintf (stderr, "    -fn %s",
+             gettext("font                font to use in label\n"));
+    fprintf (stderr, "    -scale %s",
+             gettext("number           minimum number of scale lines\n"));
+    fprintf (stderr, "    -update %s",
+             gettext("seconds         interval between updates\n"));
+    fprintf (stderr, "    -label %s",
+             gettext("string           annotation text\n"));
+    fprintf (stderr, "    -bg %s",
+             gettext("color               background color\n"));
+    fprintf (stderr, "    -fg %s",
+             gettext("color               graph color\n"));
+    fprintf (stderr, "    -hl %s",
+             gettext("color               scale and text color\n"));
+    fprintf (stderr, "    -nolabel                %s",
+             gettext("removes the label from above the chart.\n"));
+    fprintf (stderr, "    -jumpscroll %s",
+             gettext("value       number of pixels to scroll on overflow\n"));
+    fprintf (stderr, "    -lights                 %s",
+             gettext("use keyboard leds to display current load\n"));
     fprintf (stderr, "\n");
     exit(1);
 }
@@ -147,6 +173,9 @@ main(int argc, char **argv)
     Arg args[1];
     Pixmap icon_pixmap = None;
     char *label, host[256];
+    char *domaindir;
+
+    XtSetLanguageProc ( NULL, NULL, NULL );
 
     ProgramName = argv[0];
 
@@ -155,12 +184,12 @@ main(int argc, char **argv)
     InitLoadPoint();
     /* reset gid first while still (maybe) root */
     if (setgid(getgid()) == -1) {
-	    fprintf(stderr, "%s: setgid failed: %s\n", 
+	    fprintf(stderr, gettext("%s: setgid failed: %s\n"),
 		ProgramName, strerror(errno));
 	    exit(1);
     }
     if (setuid(getuid()) == -1) {
-	    fprintf(stderr, "%s: setuid failed: %s\n", 
+	    fprintf(stderr, gettext("%s: setuid failed: %s\n"),
 		ProgramName, strerror(errno));
 	    exit(1);
     }
@@ -169,6 +198,14 @@ main(int argc, char **argv)
 
     toplevel = XtAppInitialize(&app_con, "XLoad", options, XtNumber(options),
 			       &argc, argv, NULL, NULL, (Cardinal) 0);
+
+    textdomain("xload");
+
+    if ((domaindir = getenv ( "TEXTDOMAINDIR" )) == NULL) {
+	domaindir = "/usr/share/locale"; /*XLOCALEDIR;*/
+    }
+    bindtextdomain("xload", domaindir);
+
     if (argc != 1) usage();
 
     XtGetApplicationResources( toplevel, (XtPointer) &resources, 
