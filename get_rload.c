@@ -1,4 +1,4 @@
-/* $XFree86: xc/programs/xload/get_rload.c,v 1.5 2002/01/07 21:46:49 dawes Exp $ */
+/* $XFree86$ */
 
 #include <stdio.h>
 #include <X11/Intrinsic.h>

@@ -1,4 +1,4 @@
-/* $XFree86: xc/programs/xload/xload.h,v 1.2 2001/08/28 17:10:39 tsi Exp $ */
+/* $XFree86$ */
 
 #ifndef _XLOAD_H_
 #define _XLOAD_H_
