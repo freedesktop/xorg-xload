@@ -1,4 +1,4 @@
-/* $XdotOrg: xc/programs/xload/get_load.c,v 1.1.4.5.2.1 2004/03/04 17:49:14 eich Exp $ */
+/* $XdotOrg: xc/programs/xload/get_load.c,v 1.2 2004/04/23 19:54:57 eich Exp $ */
 /* $XConsortium: get_load.c /main/37 1996/03/09 09:38:04 kaleb $ */
 /* $XFree86: xc/programs/xload/get_load.c,v 1.21tsi Exp $ */
 /*
