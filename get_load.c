@@ -1,6 +1,6 @@
-/* $XdotOrg: xc/programs/xload/get_load.c,v 1.1.4.3 2003/12/15 16:00:01 kaleb Exp $ */
+/* $XdotOrg: xc/programs/xload/get_load.c,v 1.1.4.5 2004/02/23 21:38:02 kaleb Exp $ */
 /* $XConsortium: get_load.c /main/37 1996/03/09 09:38:04 kaleb $ */
-/* $XFree86: xc/programs/xload/get_load.c,v 1.21 2003/12/19 02:05:40 dawes Exp $ */
+/* $XFree86: xc/programs/xload/get_load.c,v 1.22 2003/12/22 17:48:13 tsi Exp $ */
 /*
 
 Copyright (c) 1989  X Consortium
@@ -155,9 +155,7 @@ struct lavnum {
 extern long lseek();
 #endif
 
-static void xload_error(
-char *, char *
-);
+void xload_error(char *, char *);
 
 
 #ifdef apollo
@@ -1072,7 +1070,7 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* KVM_ROUTINES else */
 #endif /* SYSV && i386 else */
 
-static void xload_error(str1, str2)
+void xload_error(str1, str2)
 char *str1, *str2;
 {
     (void) fprintf(stderr,"xload: %s %s\n", str1, str2);
