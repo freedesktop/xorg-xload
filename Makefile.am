@@ -21,8 +21,8 @@
 
 bin_PROGRAMS = xload
 
-xload_CFLAGS = $(DEP_CFLAGS)
-xload_LDADD = $(DEP_LIBS)
+xload_CFLAGS = $(XLOAD_CFLAGS)
+xload_LDADD = $(XLOAD_LIBS)
 
 xload_SOURCES =	\
         get_load.c \
