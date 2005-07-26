@@ -48,7 +48,7 @@ SUFFIXES = .ad
 
 appdefault_DATA = $(APPDEFAULTFILES)
 
-EXTRA_DIST = $(foreach FILE, $(APPDEFAULTFILES), $(FILE).ad) xload.bit
+EXTRA_DIST = $(APPDEFAULTFILES:%=%.ad) xload.bit
 
 CLEANFILES = $(APPDEFAULTFILES)
 
