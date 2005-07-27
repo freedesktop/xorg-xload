@@ -31,6 +31,11 @@ AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_INSTALL
 
+### How to check load average on various OS'es:
+
+# Solaris: libkstat
+AC_CHECK_LIB([kstat], [kstat_open])
+
 # Checks for pkg-config packages
 XAW_CHECK_XPRINT_SUPPORT(XLOAD)
 
