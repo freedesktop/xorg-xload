@@ -30,7 +30,7 @@ xload_SOURCES =	\
         xload.c \
         xload.h
 
-dist_man_MANS = \
+dist_man1_MANS = \
         xload.man
 
 # App default files  (*.ad)
