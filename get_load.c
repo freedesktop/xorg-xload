@@ -413,7 +413,7 @@ XtPointer call_data;	/* pointer to (double) return value */
 }
 #else /* not KVM_ROUTINES */
 
-#ifdef linux
+#if defined(linux) || (defined(__FreeBSD_kernel__) && defined(__GLIBC__))
 
 void InitLoadPoint()
 {
