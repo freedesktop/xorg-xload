@@ -1,3 +1,8 @@
+2007-03-21  Jeremy C. Reed  <reed@reedmedia.net>
+
+	* configure.ac
+	Update version for another release.
+
 2006-06-20  Matthieu Herrb <matthieu.herrb@laas.fr>
 
 	* xload.c:
