@@ -270,8 +270,7 @@ main(int argc, char **argv)
 static unsigned long	current_leds;
 
 static void
-ClearLights (dpy)
-    Display *dpy;
+ClearLights (Display *dpy)
 {
     XKeyboardControl	cntrl;
 
@@ -281,9 +280,7 @@ ClearLights (dpy)
 }
 
 static void
-SetLights (data, timer)
-    XtPointer	    data;
-    XtIntervalId    *timer;
+SetLights (XtPointer data, XtIntervalId *timer)
 {
     Widget		toplevel;
     Display		*dpy;
@@ -318,11 +315,7 @@ SetLights (data, timer)
 		    SetLights, data);
 }
 
-static void quit (w, event, params, num_params)
-    Widget w;
-    XEvent *event;
-    String *params;
-    Cardinal *num_params;
+static void quit (Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
     if (event->type == ClientMessage &&
         event->xclient.data.l[0] != wm_delete_window) {
