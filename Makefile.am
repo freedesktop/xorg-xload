@@ -39,7 +39,7 @@ appdefaultdir = @appdefaultdir@
 
 
 APPDEFAULTFILES = \
-        XLoad
+        app-defaults/XLoad
 
 SUFFIXES = .ad 
 
