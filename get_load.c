@@ -508,7 +508,7 @@ void GetLoadPoint( w, closure, call_data )
 
 #else /* __GNU__ */
 
-#ifdef __DARWIN__
+#ifdef __APPLE__
 
 #include <mach/mach.h>
 
@@ -540,7 +540,7 @@ void GetLoadPoint( w, closure, call_data )
     return;
 }
 
-#else /* __DARWIN__ */
+#else /* __APPLE__ */
 
 #ifdef LOADSTUB
 
@@ -1132,7 +1132,7 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* __QNXNTO__ else */
 #endif /* __osf__ else */
 #endif /* LOADSTUB else */
-#endif /* __DARWIN__ else */
+#endif /* __APPLE__ else */
 #endif /* __GNU__ else */
 #endif /* linux else */
 #endif /* KVM_ROUTINES else */
