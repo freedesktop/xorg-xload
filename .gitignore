@@ -19,3 +19,7 @@ stamp-h1
 xload
 xload.1
 *~
+*.o
+xload-*.tar.*
+ChangeLog
+tags

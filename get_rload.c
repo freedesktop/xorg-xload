@@ -30,14 +30,6 @@ void GetRLoadPoint(
 #define _PATH_RWHODIR "/var/spool/rwho"
 #endif
 
-typedef struct _XLoadResources {
-  Boolean show_label;
-  Boolean use_lights;
-  String remote;
-} XLoadResources;
-
-extern XLoadResources resources ;
-
 #define WHDRSIZE        ((int)(sizeof (buf) - sizeof (buf.wd_we)))
 
 void GetRLoadPoint(

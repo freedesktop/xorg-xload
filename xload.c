@@ -52,21 +52,12 @@ from the X Consortium.
 
 #include "xload.bit"
 
-char *ProgramName;
+static char *ProgramName;
 
 static void quit(Widget w, XEvent *event, String *params, Cardinal *num_params);
 static void ClearLights(Display *dpy);
 static void SetLights(XtPointer data, XtIntervalId *timer);
 
-/*
- * Definition of the Application resources structure.
- */
-
-typedef struct _XLoadResources {
-  Boolean show_label;
-  Boolean use_lights;
-  String remote;
-} XLoadResources;
 
 /*
  * Command line options table.  Only resources are entered here...there is a
