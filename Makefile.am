@@ -21,7 +21,7 @@
 
 bin_PROGRAMS = xload
 
-AM_CFLAGS = $(XLOAD_CFLAGS)
+AM_CFLAGS = $(CWARNFLAGS) $(XLOAD_CFLAGS)
 xload_LDADD = $(XLOAD_LIBS)
 
 xload_SOURCES =	\

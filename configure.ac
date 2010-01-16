@@ -45,7 +45,6 @@ AC_CHECK_LIB([kstat], [kstat_open])
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XLOAD, xaw7)
-XLOAD_CFLAGS="$CWARNFLAGS $XLOAD_CFLAGS"
 AC_SUBST(XLOAD_CFLAGS)
 AC_SUBST(XLOAD_LIBS)
 
