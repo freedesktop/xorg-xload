@@ -85,3 +85,12 @@ ChangeLog:
 	$(CHANGELOG_CMD)
 
 dist-hook: ChangeLog INSTALL
+
+if USE_GETTEXT
+noinst_DATA = xload.po
+
+xload.po: $(xload_SOURCES:%=$(srcdir)/%)
+	$(AM_V_GEN)xgettext -d xload -n $(xload_SOURCES:%=$(srcdir)/%)
+
+CLEANFILES += xload.po
+endif

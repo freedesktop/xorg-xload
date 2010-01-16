@@ -57,6 +57,10 @@ from the X Consortium.
  * xload - display system load average in a window
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <errno.h>
 #include <stdio.h> 
 #include <stdlib.h>
@@ -73,8 +77,12 @@ from the X Consortium.
 #include <X11/Xmu/SysUtil.h>
 #include "xload.h"
 
-#include <libintl.h>
-#include <X11/Xlocale.h>
+#ifdef USE_GETTEXT
+# include <X11/Xlocale.h>
+# include <libintl.h>
+#else
+# define gettext(a) (a)
+#endif
 
 #include "xload.bit"
 
@@ -202,7 +210,7 @@ main(int argc, char **argv)
     textdomain("xload");
 
     if ((domaindir = getenv ( "TEXTDOMAINDIR" )) == NULL) {
-	domaindir = "/usr/share/locale"; /*XLOCALEDIR;*/
+	domaindir = LOCALEDIR;
     }
     bindtextdomain("xload", domaindir);
 
