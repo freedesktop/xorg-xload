@@ -207,12 +207,14 @@ main(int argc, char **argv)
     toplevel = XtAppInitialize(&app_con, "XLoad", options, XtNumber(options),
 			       &argc, argv, NULL, NULL, (Cardinal) 0);
 
+#ifdef USE_GETTEXT
     textdomain("xload");
 
     if ((domaindir = getenv ( "TEXTDOMAINDIR" )) == NULL) {
 	domaindir = LOCALEDIR;
     }
     bindtextdomain("xload", domaindir);
+#endif
 
     if (argc != 1) usage();
 
