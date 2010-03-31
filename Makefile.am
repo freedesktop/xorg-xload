@@ -24,6 +24,8 @@ bin_PROGRAMS = xload
 AM_CFLAGS = $(CWARNFLAGS) $(XLOAD_CFLAGS)
 xload_LDADD = $(XLOAD_LIBS)
 
+ACLOCAL_AMFLAGS = -I m4
+
 xload_SOURCES =	\
         get_load.c \
         get_rload.c \
