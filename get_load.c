@@ -71,7 +71,7 @@ static long (__stdcall *pdhaddcounter)(HANDLE, LPCSTR, DWORD, HANDLE*);
 static long (__stdcall *pdhcollectquerydata)(HANDLE);
 static long (__stdcall *pdhgetformattedcountervalue)(HANDLE, DWORD, LPDWORD, COUNTER*);
 #define CYGWIN_PERF 
-void InitLoadPoint()
+void InitLoadPoint(void)
 {
   long ret;
   hdll=LoadLibrary("pdh.dll");
@@ -89,10 +89,10 @@ void InitLoadPoint()
   ret = pdhaddcounter(query, "\\Processor(_Total)\\% Processor Time", 0, &counter);
   if (ret!=0) exit(-1);  
 }
-void GetLoadPoint( w, closure, call_data )      /* SYSV386 version */
-     Widget  w;              /* unused */
-     XtPointer       closure;        /* unused */
-     XtPointer       call_data;      /* pointer to (double) return value */
+void GetLoadPoint(
+     Widget  w,              /* unused */
+     XtPointer    closure,        /* unused */
+     XtPointer    call_data)      /* pointer to (double) return value */
 {
   double *loadavg = (double *)call_data;
   COUNTER fmtvalue;
