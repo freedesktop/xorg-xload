@@ -112,7 +112,6 @@ void GetLoadPoint(
 #define LOADSTUB
 #endif
 
-#ifndef macII
 #ifndef apollo
 #ifndef LOADSTUB
 #if !defined(linux) && !defined(__UNIXOS2__) && !defined(__GLIBC__)
@@ -120,7 +119,6 @@ void GetLoadPoint(
 #endif /* !linux && ... */
 #endif /* LOADSTUB */
 #endif /* apollo */
-#endif /* macII */
 
 #if defined(MOTOROLA) && defined(SYSV)
 #include <sys/sysinfo.h>
@@ -161,16 +159,6 @@ void GetLoadPoint(
 #include <sys/vm.h>
 #endif /* sequent */
 
-#ifdef macII
-#include <a.out.h>
-#include <sys/var.h>
-#define X_AVENRUN 0
-#define fxtod(i) (vec[i].high+(vec[i].low/65536.0))
-struct lavnum {
-    unsigned short high;
-    unsigned short low;
-};
-#endif /* macII */
 
 #ifdef hcx
 #include <sys/param.h>
@@ -741,9 +729,6 @@ GetLoadPoint(Widget w, XtPointer closure, XtPointer call_data)
 #define KERNEL_FILE "/hp-ux"
 #endif /* hpux */
 
-#ifdef macII
-#define KERNEL_FILE "/unix"
-#endif /* macII */
 
 #ifdef umips
 # ifdef SYSTYPE_SYSV
@@ -885,50 +870,17 @@ GetLoadPoint(Widget w, XtPointer closure, XtPointer call_data)
 #    endif
 #endif /* KERNEL_LOAD_VARIABLE */
 
-#ifdef macII
-static struct var v;
-static int pad[2];	/* This padding is needed if xload compiled on */
-			/* a/ux 1.1 is executed on a/ux 1.0, because */
-			/* the var structure had too much padding in 1.0, */
-			/* so the 1.0 kernel writes past the end of the 1.1 */
-			/* var structure in the uvar() call. */
-static struct nlist nl[2];
-static struct lavnum vec[3];
-#else /* not macII */
 static struct nlist namelist[] = {	    /* namelist for vmunix grubbing */
 #define LOADAV 0
     {KERNEL_LOAD_VARIABLE},
     {0}
 };
-#endif /* macII */
 
 static int kmem;
 static long loadavg_seek;
 
 void InitLoadPoint()
 {
-#ifdef macII
-    extern nlist();
-
-    int i;
-
-    strcpy(nl[0].n_name, "avenrun");
-    nl[1].n_name[0] = '\0';
-
-    kmem = open(KMEM_FILE, O_RDONLY);
-    if (kmem < 0) {
-	xload_error("cannot open", KMEM_FILE);
-    }
-
-    uvar(&v);
-
-    if (nlist( KERNEL_FILE, nl) != 0) {
-	xload_error("cannot get name list from", KERNEL_FILE);
-    }
-    for (i = 0; i < 2; i++) {
-	nl[i].n_value = (int)nl[i].n_value - v.v_kvoffset;
-    }
-#else /* not macII */
 #if !defined(SVR4) && !defined(sgi) && !defined(MOTOROLA) && !defined(AIXV5) && !(BSD >= 199103) && !defined(__APPLE__)
     extern void nlist();
 #endif
@@ -963,7 +915,6 @@ void InitLoadPoint()
 #endif /* CRAY && SYSINFO */
     kmem = open(KMEM_FILE, O_RDONLY);
     if (kmem < 0) xload_error("cannot open", KMEM_FILE);
-#endif /* macII else */
 }
 
 /* ARGSUSED */
@@ -974,11 +925,7 @@ void GetLoadPoint( w, closure, call_data )
 {
   	double *loadavg = (double *)call_data;
 
-#ifdef macII
-	lseek(kmem, (long)nl[X_AVENRUN].n_value, 0);
-#else
 	(void) lseek(kmem, loadavg_seek, 0);
-#endif
 
 #if defined(sun) || defined (UTEK) || defined(sequent) || defined(alliant) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
 	{
@@ -987,12 +934,6 @@ void GetLoadPoint( w, closure, call_data )
 		*loadavg = (double)temp/FSCALE;
 	}
 #else /* else not sun or UTEK or sequent or alliant or SVR4 or sgi or hcx */
-# ifdef macII
-        {
-                read(kmem, vec, 3*sizeof(struct lavnum));
-                *loadavg = fxtod(0);
-        }
-# else /* else not macII */
 #  if defined(umips) || (defined(ultrix) && defined(mips))
 	{
 		fix temp;
@@ -1123,7 +1064,6 @@ void GetLoadPoint( w, closure, call_data )
 #     endif /* MOTOROLA else */
 #    endif /* AIXV3 else */
 #  endif /* umips else */
-# endif /* macII else */
 #endif /* sun or SVR4 or ... else */	
 	return;
 }
