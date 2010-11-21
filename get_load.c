@@ -1,6 +1,3 @@
-/* $XdotOrg: xc/programs/xload/get_load.c,v 1.2 2004/04/23 19:54:57 eich Exp $ */
-/* $XConsortium: get_load.c /main/37 1996/03/09 09:38:04 kaleb $ */
-/* $XFree86: xc/programs/xload/get_load.c,v 1.21tsi Exp $ */
 /*
 
 Copyright (c) 1989  X Consortium
