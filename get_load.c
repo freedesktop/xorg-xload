@@ -112,13 +112,11 @@ void GetLoadPoint(
 #define LOADSTUB
 #endif
 
-#ifndef apollo
 #ifndef LOADSTUB
 #if !defined(linux) && !defined(__UNIXOS2__) && !defined(__GLIBC__)
 #include <nlist.h>
 #endif /* !linux && ... */
 #endif /* LOADSTUB */
-#endif /* apollo */
 
 #if defined(MOTOROLA) && defined(SYSV)
 #include <sys/sysinfo.h>
@@ -209,66 +207,6 @@ extern long lseek();
 void xload_error(char *, char *);
 
 
-#ifdef apollo
-#include <apollo/base.h>
-#include <apollo/time.h>
-typedef struct {
-	short		state;		/* ready, waiting, etc. */
-	pinteger	usr;		/* user sr */
-	linteger	upc;		/* user pc */
-	linteger	usp;		/* user stack pointer */
-	linteger	usb;		/* user sb ptr (A6) */
-	time_$clock_t	cpu_total;	/* cumulative cpu used by process */
-	unsigned short	priority;	/* process priority */
-    } proc1_$info_t;
-
-void proc1_$get_cput(
-	time_$clock_t	*cput
-);
-
-void proc1_$get_info(
-	short		&pid,
-	proc1_$info_t	*info,
-	status_$t	*sts
-);
-
-static int     lastNullCpu;
-static int     lastClock;
-
-void InitLoadPoint()				/* Apollo version */
-{
-     time_$clock_t  timeNow;
-     proc1_$info_t  info;
-     status_$t      st;
-
-     proc1_$get_info( (short) 2, &info, &st );
-     time_$clock( &timeNow );
-
-     lastClock = timeNow.low32;
-     lastNullCpu = info.cpu_total.low32;
-}
-
-/* ARGSUSED */
-void GetLoadPoint( w, closure, call_data ) 	/* Apollo version */
-     Widget	w;		/* unused */
-     XtPointer	closure;	/* unused */
-     XtPointer	call_data;	/* pointer to (double) return value */
-{
-     time_$clock_t  timeNow;
-     double         temp;
-     proc1_$info_t  info;
-     status_$t      st;
-
-     proc1_$get_info( (short) 2, &info, &st );
-     time_$clock( &timeNow );
-
-     temp = info.cpu_total.low32 - lastNullCpu;
-     *(double *)call_data = 1.0 - temp / (timeNow.low32 - lastClock);
-
-     lastClock = timeNow.low32;
-     lastNullCpu = info.cpu_total.low32;
-}
-#else /* not apollo */
 #if defined(SYSV) && defined(i386)
 /*
  * inspired by 'avgload' by John F. Haugh II
@@ -1089,7 +1027,6 @@ void xload_error(char *str1, char *str2)
     exit(-1);
 }
 
-#endif /* apollo else */
 
 #else /* !DGUX */
 
