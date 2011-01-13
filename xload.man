@@ -89,7 +89,7 @@ stored in the RESOURCE_MANAGER property.
 .I __apploaddir__/XLoad
 specifies required resources
 .SH SEE ALSO
-X(__miscmansuffix__), xrdb(1), mem(4), Athena StripChart Widget.
+X(__miscmansuffix__), xrdb(__appmansuffix__), mem(__drivermansuffix__), Athena StripChart Widget.
 .SH BUGS
 On older platforms, this program may require the ability to open and read
 the special system file \fI/dev/kmem\fP.  Sites that do not allow general
