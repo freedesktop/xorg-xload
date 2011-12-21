@@ -228,7 +228,7 @@ main(int argc, char **argv)
 	XrmValue    int_value;
 	Bool	    found = False;
 
-	(void) sprintf (name, "%s.paned.load.update", XtName(toplevel));
+	snprintf (name, sizeof(name), "%s.paned.load.update", XtName(toplevel));
 	found = XrmGetResource (XtScreenDatabase(XtScreen(toplevel)),
 				name, "XLoad.Paned.StripChart.Interval",
 				&type, &db_value);
