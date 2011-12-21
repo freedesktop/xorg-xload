@@ -104,7 +104,6 @@ void GetLoadPoint(
 #else
 
 
-#if !defined(DGUX)
 #if defined(att) || defined(QNX4)
 #define LOADSTUB
 #endif
@@ -1023,92 +1022,5 @@ static void xload_error(const char *str1, const char *str2)
 #endif
     exit(-1);
 }
-
-
-#else /* !DGUX */
-
-/* INTEL DGUX Release 4.20MU04
- * Copyright 1999 Takis Psarogiannakopoulos
- * Cambridge, UK
- * <takis@dpmms.cam.ac.uk>
- */
-
-#include <errno.h>
-#include <nlist.h>
-#include <sys/dg_sys_info.h>
-
-static struct dg_sys_info_load_info load_info;  /* DG/ux */
-
-#define KERNEL_FILE "/dgux"
-#define LDAV_SYMBOL "_avenrun"
-
-void InitLoadPoint()
-{
-
-}
-
-void GetLoadPoint(w, closure, call_data)
-     Widget w;          /* unused */
-     XtPointer closure;   /* unused */
-     XtPointer call_data; /* ptr to (double) return value */
-{
-  double *loadavg = (double *)call_data;
-
-  if (getloadavg(loadavg, 1) < 0)
-    xload_error("couldn't obtain load average", "");
-}
-
-xload_error(str1, str2)
-char *str1, *str2;
-{
-    (void) fprintf(stderr,"xload: %s %s\n", str1, str2);
-    exit(-1);
-}
-
-#if !defined (LDAV_CVT) && defined (FSCALE)
-#define LDAV_CVT(n) (((double) (n)) / FSCALE)
-#endif
-#if !defined(LDAV_CVT) && defined(LOAD_AVE_CVT)
-#define LDAV_CVT(n) (LOAD_AVE_CVT (n) / 100.0)
-#endif
-#define LOAD_AVE_TYPE double
-#ifndef LDAV_CVT
-#define LDAV_CVT(n) ((double) (n))
-#endif /* !LDAV_CVT */
-static int channel;
-static int getloadavg_initialized;
-static long offset;
-static struct nlist nl[2];
-
-
-/* GETLOADAVG FUNCTION FOR DG/ux R4.20MU04 */
-
-int
-getloadavg (double loadavg[], int nelem)
-{
-  int elem = 0;                 /* Return value.  */
-  int result =0 ;
-
-  /* This call can return -1 for an error, but with good args
-     it's not supposed to fail.  The first argument is for no
-     apparent reason of type `long int *'.  */
-  result = dg_sys_info ((long int *) &load_info,
-		DG_SYS_INFO_LOAD_INFO_TYPE, DG_SYS_INFO_LOAD_VERSION_0);
-  if ( result == -1)
-  {
-     return(-1);
-  }
-  if (nelem > 0)
-    loadavg[elem++] = load_info.one_minute;
-  if (nelem > 1)
-    loadavg[elem++] = load_info.five_minute;
-  if (nelem > 2)
-    loadavg[elem++] = load_info.fifteen_minute;
-
-  return elem;
-}
-
-#endif /* END OF DG/ux */
-
 
 #endif /* END of __CYGWIN__ */
