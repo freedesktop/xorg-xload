@@ -201,7 +201,7 @@ void GetLoadPoint(
 extern long lseek();
 #endif
 
-static void xload_error(const char *, const char *);
+static void xload_error(const char *, const char *) _X_NORETURN;
 
 
 #if defined(SYSV) && defined(i386)

@@ -66,7 +66,7 @@ AM_CONDITIONAL(USE_GETTEXT, test "x$USE_GETTEXT" = "xyes")
 AC_CHECK_LIB([kstat], [kstat_open])
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(XLOAD, xaw7 xmu xt x11)
+PKG_CHECK_MODULES(XLOAD, xaw7 xmu xt x11 [xproto >= 7.0.17])
 
 PKG_CHECK_MODULES(APPDEFS, xt)
 xt_appdefaultdir=`$PKG_CONFIG --variable=appdefaultdir xt`
