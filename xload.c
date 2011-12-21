@@ -179,7 +179,7 @@ main(int argc, char **argv)
     Arg args[1];
     Pixmap icon_pixmap = None;
     char *label, host[256];
-    char *domaindir;
+    const char *domaindir;
 
     XtSetLanguageProc ( NULL, NULL, NULL );
 
