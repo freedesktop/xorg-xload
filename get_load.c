@@ -201,7 +201,7 @@ void GetLoadPoint(
 extern long lseek();
 #endif
 
-void xload_error(char *, char *);
+static void xload_error(const char *, const char *);
 
 
 #if defined(SYSV) && defined(i386)
@@ -1014,7 +1014,7 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* KVM_ROUTINES else */
 #endif /* SYSV && i386 else */
 
-void xload_error(char *str1, char *str2)
+static void xload_error(const char *str1, const char *str2)
 {
     (void) fprintf(stderr,"xload: %s %s\n", str1, str2);
 #ifdef __bsdi__
