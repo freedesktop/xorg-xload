@@ -28,6 +28,7 @@ AC_INIT([xload], [1.1.0],
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
+AC_USE_SYSTEM_EXTENSIONS
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
@@ -62,8 +63,9 @@ AM_CONDITIONAL(USE_GETTEXT, test "x$USE_GETTEXT" = "xyes")
 
 ### How to check load average on various OS'es:
 
-# Solaris: libkstat
-AC_CHECK_LIB([kstat], [kstat_open])
+# getloadavg: 4.3BSD-Reno & later, glibc 2.2 & later, Solaris 7 & later
+# BSD & GNU libc use <stdlib.h>, Solaris requires <sys/loadavg.h>
+AC_CHECK_FUNCS([getloadavg], [AC_CHECK_HEADERS([sys/loadavg.h])])
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XLOAD, xaw7 xmu xt x11 [xproto >= 7.0.17])

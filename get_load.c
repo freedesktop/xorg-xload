@@ -118,20 +118,6 @@ void GetLoadPoint(
 #include <sys/sysinfo.h>
 #endif
 
-#ifdef sun
-#    include <sys/param.h>
-#    if !defined(HAVE_CONFIG_H) && defined(SVR4) 
-# 	define HAVE_LIBKSTAT 1
-#    endif
-#    ifdef HAVE_LIBKSTAT
-#	include <kstat.h>
-#	include <errno.h>
-#    elif defined(i386) && !defined(SVR4)
-#        include <kvm.h>
-#        define	KVM_ROUTINES
-#    endif /* i386 */
-#endif
-
 #ifdef CSRG_BASED
 #include <sys/param.h>
 #endif
@@ -290,51 +276,6 @@ XtPointer	call_data;	/* pointer to (double) return value */
     return;
 }
 #else /* not (SYSV && i386) */
-#ifdef KVM_ROUTINES
-/*
- *	Sun 386i Code - abstracted to see the wood for the trees
- */
-
-static struct nlist nl[2];
-static kvm_t *kd;
-
-void
-InitLoadPoint()					/* Sun 386i version */
-{
-    kd = kvm_open("/vmunix", NULL, NULL, O_RDONLY, "Load Widget");
-    if (kd == (kvm_t *)0) {
-	xload_error("cannot get access to kernel address space", "");
-    }
-	
-    nl[0].n_name = "avenrun";
-    nl[1].n_name = NULL;
-	
-    if (kvm_nlist(kd, nl) != 0) {
-	xload_error("cannot get name list", "");
-    }
-    
-    if (nl[0].n_value == 0) {
-	xload_error("Cannot find address for avenrun in the kernel\n", "");
-    }
-}
-
-/* ARGSUSED */
-void 
-GetLoadPoint( w, closure, call_data ) 		/* Sun 386i version */
-Widget	w;		/* unused */
-XtPointer closure;	/* unused */
-XtPointer call_data;	/* pointer to (double) return value */
-{
-    double *loadavg = (double *)call_data;
-    long	temp;
-
-    if (kvm_read(kd, nl[0].n_value, (char *)&temp, sizeof (temp)) != 
-	sizeof (temp)) {
-	xload_error("Kernel read error", "");
-    }
-    *loadavg = (double)temp/FSCALE;
-}
-#else /* not KVM_ROUTINES */
 
 #if defined(linux) || (defined(__FreeBSD_kernel__) && defined(__GLIBC__))
 
@@ -595,8 +536,11 @@ void GetLoadPoint(
 }
 
 #else /* not __bsdi__ */
-#if defined(BSD) && (BSD >= 199306)
+#if defined(HAVE_GETLOADAVG)
 #include <stdlib.h>
+#ifdef HAVE_SYS_LOADAVG_H
+#include <sys/loadavg.h>	/* Solaris definition of getloadavg */
+#endif
 
 void InitLoadPoint()
 {
@@ -613,37 +557,7 @@ void GetLoadPoint(w, closure, call_data)
     xload_error("couldn't obtain load average", "");
 }
 
-#else /* not BSD >= 199306 */
-#if defined(sun) && defined(HAVE_LIBKSTAT)
-
-static kstat_t		*ksp;
-static kstat_ctl_t	*kc;
-
-void
-InitLoadPoint(void)
-{
-	if ((kc = kstat_open()) == NULL)
-		xload_error("kstat_open failed:", strerror(errno));
-
-	if ((ksp = kstat_lookup(kc, "unix", 0, "system_misc")) == NULL)
-		xload_error("kstat_lookup failed:", strerror(errno));
-}
-
-void
-GetLoadPoint(Widget w, XtPointer closure, XtPointer call_data)
-{
-	kstat_named_t *vp;
-	double *loadavg = (double *)call_data;
-
-	if (kstat_read(kc, ksp, NULL) == -1)
-		xload_error("kstat_read failed:", strerror(errno));
-
-	if ((vp = kstat_data_lookup(ksp, "avenrun_1min")) == NULL)
-		xload_error("kstat_data_lookup failed:", strerror(errno));
-
-	*loadavg = (double)vp->value.ui32 / FSCALE;
-}
-#else /* not Solaris */
+#else /* not HAVE_GETLOADAVG */
 
 #ifndef KMEM_FILE
 #define KMEM_FILE "/dev/kmem"
@@ -691,10 +605,6 @@ GetLoadPoint(Widget w, XtPointer closure, XtPointer call_data)
 #define KERNEL_FILE "/unix"
 #endif
 #endif /* MOTOROLA */
-
-#if defined(sun) && defined(SVR4)
-#define KERNEL_FILE "/kernel/unix"
-#endif
 
 #ifdef sgi
 #if (OSMAJORVERSION > 4)
@@ -861,13 +771,13 @@ void GetLoadPoint( w, closure, call_data )
 
 	(void) lseek(kmem, loadavg_seek, 0);
 
-#if defined(sun) || defined (UTEK) || defined(sequent) || defined(alliant) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
+#if defined (UTEK) || defined(sequent) || defined(alliant) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
 	{
 		long temp;
 		(void) read(kmem, (char *)&temp, sizeof(long));
 		*loadavg = (double)temp/FSCALE;
 	}
-#else /* else not sun or UTEK or sequent or alliant or SVR4 or sgi or hcx */
+#else /* else not UTEK or sequent or alliant or SVR4 or sgi or hcx */
 #  if defined(umips) || (defined(ultrix) && defined(mips))
 	{
 		fix temp;
@@ -998,11 +908,10 @@ void GetLoadPoint( w, closure, call_data )
 #     endif /* MOTOROLA else */
 #    endif /* AIXV3 else */
 #  endif /* umips else */
-#endif /* sun or SVR4 or ... else */	
+#endif /* SVR4 or ... else */
 	return;
 }
-#endif /* sun else */
-#endif /* BSD >= 199306 else */
+#endif /* HAVE_GETLOADAVG else */
 #endif /* __bsdi__ else */
 #endif /* __QNXNTO__ else */
 #endif /* __osf__ else */
@@ -1010,7 +919,6 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* __APPLE__ else */
 #endif /* __GNU__ else */
 #endif /* linux else */
-#endif /* KVM_ROUTINES else */
 #endif /* SYSV && i386 else */
 
 static void xload_error(const char *str1, const char *str2)
