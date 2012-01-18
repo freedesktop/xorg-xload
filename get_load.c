@@ -641,7 +641,7 @@ GetLoadPoint(Widget w, XtPointer closure, XtPointer call_data)
 	if ((vp = kstat_data_lookup(ksp, "avenrun_1min")) == NULL)
 		xload_error("kstat_data_lookup failed:", strerror(errno));
 
-	*loadavg = (double)vp->value.l / FSCALE;
+	*loadavg = (double)vp->value.ui32 / FSCALE;
 }
 #else /* not Solaris */
 
