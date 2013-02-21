@@ -141,33 +141,22 @@ static int light_update = 10 * 1000;
 
 static void usage(void)
 {
-    fprintf (stderr, gettext("usage:  %s [-options ...]\n\n"), ProgramName);
-    fprintf (stderr, gettext("where options include:\n"));
-    fprintf (stderr, "    -display %s",
-             gettext("display        X server on which to display\n"));
-    fprintf (stderr, "    -geometry %s",
-             gettext("geometry      size and location of window\n"));
-    fprintf (stderr, "    -fn %s",
-             gettext("font                font to use in label\n"));
-    fprintf (stderr, "    -scale %s",
-             gettext("number           minimum number of scale lines\n"));
-    fprintf (stderr, "    -update %s",
-             gettext("seconds         interval between updates\n"));
-    fprintf (stderr, "    -label %s",
-             gettext("string           annotation text\n"));
-    fprintf (stderr, "    -bg %s",
-             gettext("color               background color\n"));
-    fprintf (stderr, "    -fg %s",
-             gettext("color               graph color\n"));
-    fprintf (stderr, "    -hl %s",
-             gettext("color               scale and text color\n"));
-    fprintf (stderr, "    -nolabel                %s",
-             gettext("removes the label from above the chart.\n"));
-    fprintf (stderr, "    -jumpscroll %s",
-             gettext("value       number of pixels to scroll on overflow\n"));
-    fprintf (stderr, "    -lights                 %s",
-             gettext("use keyboard leds to display current load\n"));
-    fprintf (stderr, "\n");
+    fprintf (stderr, gettext("usage:  %s [-options ...]\n\n%s\n"),
+             ProgramName, gettext(
+      "where options include:\n"
+      "    -display <display>      X server on which to display\n"
+      "    -geometry <geometry>    size and location of window\n"
+      "    -fn <font>              font to use in label\n"
+      "    -scale <number>         minimum number of scale lines\n"
+      "    -update <seconds>       interval between updates\n"
+      "    -label <string>         annotation text\n"
+      "    -bg <color>             background color\n"
+      "    -fg <color>             graph color\n"
+      "    -hl <color>             scale and text color\n"
+      "    -nolabel                removes the label from above the chart.\n"
+      "    -jumpscroll <value>     number of pixels to scroll on overflow\n"
+      "    -lights                 use keyboard leds to display current load\n"
+                 ));
     exit(1);
 }
 
