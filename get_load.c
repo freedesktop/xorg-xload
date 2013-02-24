@@ -122,10 +122,6 @@ void GetLoadPoint(
 #include <sys/vm.h>
 #endif /* sequent */
 
-#ifdef hcx
-#include <sys/param.h>
-#endif /* hcx */
-
 #ifdef sequent
 #define FSCALE	1000.0
 #endif
@@ -543,10 +539,6 @@ void GetLoadPoint(w, closure, call_data)
 #define KERNEL_FILE "/dynix"
 #endif /* sequent */
 
-#ifdef hcx
-#define KERNEL_FILE "/unix"
-#endif /* hcx */
-
 #ifdef sgi
 #if (OSMAJORVERSION > 4)
 #define KERNEL_FILE "/unix"
@@ -640,11 +632,7 @@ void InitLoadPoint()
      * will happen to you.  (I have a hard time believing the value will
      * ever really be zero anyway).   CDP 5/17/89.
      */
-#ifdef hcx
-    if (namelist[LOADAV].n_type == 0 &&
-#else
     if (namelist[LOADAV].n_type == 0 ||
-#endif /* hcx */
 	namelist[LOADAV].n_value == 0) {
 	xload_error("cannot get name list from", KERNEL_FILE);
 	exit(-1);
@@ -664,13 +652,13 @@ void GetLoadPoint( w, closure, call_data )
 
 	(void) lseek(kmem, loadavg_seek, 0);
 
-#if defined(sequent) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
+#if defined(sequent) || defined(SVR4) || defined(sgi) || (BSD >= 199103)
 	{
 		long temp;
 		(void) read(kmem, (char *)&temp, sizeof(long));
 		*loadavg = (double)temp/FSCALE;
 	}
-#else /* else not sequent or SVR4 or sgi or hcx */
+#else /* else not sequent or SVR4 or sgi */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
 #endif /* SVR4 or ... else */
 	return;
