@@ -109,7 +109,7 @@ void GetLoadPoint(
 #endif
 
 #ifndef LOADSTUB
-#if !defined(linux) && !defined(__UNIXOS2__) && !defined(__GLIBC__)
+#if !defined(linux) && !defined(__GLIBC__)
 #include <nlist.h>
 #endif /* !linux && ... */
 #endif /* LOADSTUB */
