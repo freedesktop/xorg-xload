@@ -101,8 +101,32 @@ void GetLoadPoint(
   if (ret!=0) return;
   *loadavg = (fmtvalue.u.vDouble-0.01)/100.0;
 }
-#else
+#else /* not CYGWIN */
 
+static void xload_error(const char *, const char *) _X_NORETURN;
+
+#ifdef HAVE_GETLOADAVG
+#include <stdlib.h>
+#ifdef HAVE_SYS_LOADAVG_H
+#include <sys/loadavg.h>	/* Solaris definition of getloadavg */
+#endif
+
+void InitLoadPoint(void)
+{
+}
+
+void GetLoadPoint(
+    Widget w,            /* unused */
+    XtPointer closure,   /* unused */
+    XtPointer call_data) /* ptr to (double) return value */
+{
+    double *loadavg = (double *)call_data;
+
+    if (getloadavg(loadavg, 1) < 0)
+        xload_error("couldn't obtain load average", "");
+}
+
+#else /* not HAVE_GETLOADAVG */
 
 #if defined(att) || defined(QNX4)
 #define LOADSTUB
@@ -139,9 +163,6 @@ void GetLoadPoint(
 #define FSCALE	(1 << 8)
 #endif
 #endif
-
-static void xload_error(const char *, const char *) _X_NORETURN;
-
 
 #if defined(SYSV) && defined(i386)
 /*
@@ -490,29 +511,6 @@ void GetLoadPoint(
 }
 
 #else /* not __bsdi__ */
-#if defined(HAVE_GETLOADAVG)
-#include <stdlib.h>
-#ifdef HAVE_SYS_LOADAVG_H
-#include <sys/loadavg.h>	/* Solaris definition of getloadavg */
-#endif
-
-void InitLoadPoint()
-{
-}
-
-void GetLoadPoint(w, closure, call_data)
-     Widget w;          /* unused */
-     XtPointer closure;   /* unused */
-     XtPointer call_data; /* ptr to (double) return value */
-{
-  double *loadavg = (double *)call_data;
-
-  if (getloadavg(loadavg, 1) < 0) 
-    xload_error("couldn't obtain load average", "");
-}
-
-#else /* not HAVE_GETLOADAVG */
-
 #ifndef KMEM_FILE
 #define KMEM_FILE "/dev/kmem"
 #endif
@@ -647,7 +645,6 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* SVR4 or ... else */
 	return;
 }
-#endif /* HAVE_GETLOADAVG else */
 #endif /* __bsdi__ else */
 #endif /* __QNXNTO__ else */
 #endif /* __osf__ else */
@@ -656,6 +653,7 @@ void GetLoadPoint( w, closure, call_data )
 #endif /* __GNU__ else */
 #endif /* linux else */
 #endif /* SYSV && i386 else */
+#endif /* HAVE_GETLOADAVG else */
 
 static void xload_error(const char *str1, const char *str2)
 {
