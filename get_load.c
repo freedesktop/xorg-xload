@@ -126,10 +126,6 @@ void GetLoadPoint(
 #include <sys/param.h>
 #endif /* hcx */
 
-#if defined(UTEK)
-#define FSCALE	100.0
-#endif
-
 #ifdef sequent
 #define FSCALE	1000.0
 #endif
@@ -668,13 +664,13 @@ void GetLoadPoint( w, closure, call_data )
 
 	(void) lseek(kmem, loadavg_seek, 0);
 
-#if defined (UTEK) || defined(sequent) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
+#if defined(sequent) || defined(SVR4) || defined(sgi) || defined(hcx) || (BSD >= 199103)
 	{
 		long temp;
 		(void) read(kmem, (char *)&temp, sizeof(long));
 		*loadavg = (double)temp/FSCALE;
 	}
-#else /* else not UTEK or sequent or SVR4 or sgi or hcx */
+#else /* else not sequent or SVR4 or sgi or hcx */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
 #endif /* SVR4 or ... else */
 	return;
