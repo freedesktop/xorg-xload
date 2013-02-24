@@ -126,19 +126,9 @@ void GetLoadPoint(
 #include <sys/fixpoint.h>
 #endif
 
-#if  defined(CRAY) || defined(AIXV3)
-#include <sys/param.h>
-#define word word_t
-#include <sys/sysinfo.h>
-#undef word
-#undef n_type
-#define n_type n_value
-#endif	/* CRAY */
-
 #ifdef sequent
 #include <sys/vm.h>
 #endif /* sequent */
-
 
 #ifdef hcx
 #include <sys/param.h>
@@ -569,10 +559,6 @@ void GetLoadPoint(w, closure, call_data)
 #define KERNEL_FILE "/vmunix"
 #endif /* alliant */
 
-#ifdef CRAY
-#define KERNEL_FILE "/unicos"
-#endif /* CRAY */
-
 #ifdef hpux
 #define KERNEL_FILE "/hp-ux"
 #endif /* hpux */
@@ -651,15 +637,6 @@ void GetLoadPoint(w, closure, call_data)
 #    ifdef alliant
 #        define KERNEL_LOAD_VARIABLE "_Loadavg"
 #    endif /* alliant */
-
-#    ifdef CRAY
-#        if defined(CRAY2) && OSMAJORVERSION == 4
-#            define KERNEL_LOAD_VARIABLE "avenrun"
-#        else
-#            define KERNEL_LOAD_VARIABLE "sysinfo"
-#            define SYSINFO
-#        endif /* defined(CRAY2) && OSMAJORVERSION == 4 */
-#    endif /* CRAY */
 
 #    ifdef hpux
 #        ifdef __hp9000s800
@@ -753,10 +730,6 @@ void InitLoadPoint()
 #if defined(umips) && defined(SYSTYPE_SYSV)
     loadavg_seek &= 0x7fffffff;
 #endif /* umips && SYSTYPE_SYSV */
-#if (defined(CRAY) && defined(SYSINFO))
-    loadavg_seek += ((char *) (((struct sysinfo *)NULL)->avenrun)) -
-	((char *) NULL);
-#endif /* CRAY && SYSINFO */
     kmem = open(KMEM_FILE, O_RDONLY);
     if (kmem < 0) xload_error("cannot open", KMEM_FILE);
 }
