@@ -114,10 +114,6 @@ void GetLoadPoint(
 #endif /* !linux && ... */
 #endif /* LOADSTUB */
 
-#if defined(MOTOROLA) && defined(SYSV)
-#include <sys/sysinfo.h>
-#endif
-
 #ifdef CSRG_BASED
 #include <sys/param.h>
 #endif
@@ -134,7 +130,7 @@ void GetLoadPoint(
 #include <sys/param.h>
 #endif /* hcx */
 
-#if defined(UTEK) || defined(alliant) || (defined(MOTOROLA) && defined(SVR4))
+#if defined(UTEK) || defined(alliant)
 #define FSCALE	100.0
 #endif
 
@@ -580,18 +576,6 @@ void GetLoadPoint(w, closure, call_data)
 #define KERNEL_FILE "/unix"
 #endif /* hcx */
 
-#ifdef MOTOROLA
-#if defined(SYSV) && defined(m68k)
-#define KERNEL_FILE "/sysV68"
-#endif
-#if defined(SYSV) && defined(m88k)
-#define KERNEL_FILE "/unix"
-#endif
-#ifdef SVR4
-#define KERNEL_FILE "/unix"
-#endif
-#endif /* MOTOROLA */
-
 #ifdef sgi
 #if (OSMAJORVERSION > 4)
 #define KERNEL_FILE "/unix"
@@ -656,18 +640,6 @@ void GetLoadPoint(w, closure, call_data)
 #	 define KERNEL_LOAD_VARIABLE "avenrun"
 #    endif /* sgi */
 
-#    ifdef MOTOROLA
-#        if defined(SYSV) && defined(m68k)
-#            define KERNEL_LOAD_VARIABLE "sysinfo"
-#        endif
-#        if defined(SYSV) && defined(m88k)
-#            define KERNEL_LOAD_VARIABLE "_sysinfo"
-#        endif
-#        ifdef SVR4
-#            define KERNEL_LOAD_VARIABLE "avenrun"
-#        endif
-#    endif /* MOTOROLA */
-
 #endif /* KERNEL_LOAD_VARIABLE */
 
 /*
@@ -698,7 +670,7 @@ static long loadavg_seek;
 
 void InitLoadPoint()
 {
-#if !defined(SVR4) && !defined(sgi) && !defined(MOTOROLA) && !defined(AIXV5) && !(BSD >= 199103) && !defined(__APPLE__)
+#if !defined(SVR4) && !defined(sgi) && !defined(AIXV5) && !(BSD >= 199103) && !defined(__APPLE__)
     extern void nlist();
 #endif
 
@@ -750,77 +722,6 @@ void GetLoadPoint( w, closure, call_data )
 		*loadavg = FIX_TO_DBL(temp);
 	}
 #  else /* not umips or ultrix risc */
-#      if defined(MOTOROLA) && defined(SYSV)
-	{
-        static int init = 0;
-        static kmem;
-        static long loadavg_seek;
-
-#define CEXP    0.25            /* Constant used for load averaging */
-
-        struct sysinfo sysinfod;
-        static double oldloadavg;
-        static double cexp = CEXP;
-        static long sv_rq, sv_oc;   /* save old values */
-        double rq, oc;              /* amount values have changed */
-
-        if (!init)
-        {
-            if (nlist(KERNEL_FILE,namelist) == -1)
-            {
-                perror("xload: nlist()");
-                xload_error("cannot get name list from", KERNEL_FILE);
-            }
-            loadavg_seek = namelist[0].n_value;
-
-            kmem = open(KMEM_FILE, O_RDONLY);
-            if (kmem < 0)
-            {
-                perror("xload: open()");
-                xload_error("cannot open", KMEM_FILE);
-            }
-        }
-
-        lseek(kmem, loadavg_seek, 0);
-        if (read(kmem, &sysinfod, (int) sizeof (struct sysinfo)) == -1)
-        {
-             perror("xload: read() SYSINFONL");
-             xload_error("read failed from", KMEM_FILE);
-        }
-
-        if (!init)
-        {
-            init = 1;
-            sv_rq = sysinfod.runque;
-            sv_oc = sysinfod.runocc;
-            oldloadavg = *loadavg = 0.0;
-            return;
-        }
-        /*
-         * calculate the amount the values have
-         * changed since last update
-         */
-        rq = (double) sysinfod.runque - sv_rq;
-        oc = (double) sysinfod.runocc - sv_oc;
-
-        /*
-         * save old values for next time
-         */
-        sv_rq = sysinfod.runque;
-        sv_oc = sysinfod.runocc;
-
-        if (oc == 0.0)          /* avoid divide by zero  */
-        {
-                *loadavg = (1.0 - cexp) * oldloadavg;
-
-        }
-        else
-        {
-                *loadavg = ((1.0 - cexp) * oldloadavg) + ((rq / oc) * cexp);
-        }
-        oldloadavg = *loadavg;
-	}
-#      else /* not MOTOROLA */
 #     if defined(sony) && OSMAJORVERSION == 4
 #      ifdef mips
 	{
@@ -837,8 +738,7 @@ void GetLoadPoint( w, closure, call_data )
 #      endif /* mips */
 #     else /* not sony NEWSOS4 */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
-#      endif /* sony NEWOS4 */
-#     endif /* MOTOROLA else */
+#     endif /* sony NEWOS4 */
 #  endif /* umips else */
 #endif /* SVR4 or ... else */
 	return;
