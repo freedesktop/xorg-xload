@@ -118,10 +118,6 @@ void GetLoadPoint(
 #include <sys/param.h>
 #endif
 
-#if defined(umips) || (defined(ultrix) && defined(mips))
-#include <sys/fixpoint.h>
-#endif
-
 #ifdef sequent
 #include <sys/vm.h>
 #endif /* sequent */
@@ -559,15 +555,6 @@ void GetLoadPoint(w, closure, call_data)
 #define KERNEL_FILE "/hp-ux"
 #endif /* hpux */
 
-
-#ifdef umips
-# ifdef SYSTYPE_SYSV
-# define KERNEL_FILE "/unix"
-# else
-# define KERNEL_FILE "/vmunix"
-# endif /* SYSTYPE_SYSV */
-#endif /* umips */
-
 #ifdef sequent
 #define KERNEL_FILE "/dynix"
 #endif /* sequent */
@@ -628,14 +615,6 @@ void GetLoadPoint(w, closure, call_data)
 #        endif /* hp9000s800 */
 #    endif /* hpux */
 
-#    ifdef umips
-#        ifdef SYSTYPE_SYSV
-#            define KERNEL_LOAD_VARIABLE "avenrun"
-#        else
-#            define KERNEL_LOAD_VARIABLE "_avenrun"
-#        endif /* SYSTYPE_SYSV */
-#    endif /* umips */
-
 #    ifdef sgi
 #	 define KERNEL_LOAD_VARIABLE "avenrun"
 #    endif /* sgi */
@@ -691,9 +670,6 @@ void InitLoadPoint()
 	exit(-1);
     }
     loadavg_seek = namelist[LOADAV].n_value;
-#if defined(umips) && defined(SYSTYPE_SYSV)
-    loadavg_seek &= 0x7fffffff;
-#endif /* umips && SYSTYPE_SYSV */
     kmem = open(KMEM_FILE, O_RDONLY);
     if (kmem < 0) xload_error("cannot open", KMEM_FILE);
 }
@@ -715,13 +691,6 @@ void GetLoadPoint( w, closure, call_data )
 		*loadavg = (double)temp/FSCALE;
 	}
 #else /* else not UTEK or sequent or alliant or SVR4 or sgi or hcx */
-#  if defined(umips) || (defined(ultrix) && defined(mips))
-	{
-		fix temp;
-		(void) read(kmem, (char *)&temp, sizeof(fix));
-		*loadavg = FIX_TO_DBL(temp);
-	}
-#  else /* not umips or ultrix risc */
 #     if defined(sony) && OSMAJORVERSION == 4
 #      ifdef mips
 	{
@@ -739,7 +708,6 @@ void GetLoadPoint( w, closure, call_data )
 #     else /* not sony NEWSOS4 */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
 #     endif /* sony NEWOS4 */
-#  endif /* umips else */
 #endif /* SVR4 or ... else */
 	return;
 }
