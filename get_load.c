@@ -138,14 +138,6 @@ void GetLoadPoint(
 #define FSCALE	1024.0
 #endif
 
-#if defined(sony) && OSMAJORVERSION == 4
-#ifdef mips
-#include <sys/fixpoint.h>
-#else
-#include <sys/param.h>
-#endif
-#endif
-
 #ifdef __osf__
 /*
  * Use the table(2) interface; it doesn't require setuid root.
@@ -691,23 +683,7 @@ void GetLoadPoint( w, closure, call_data )
 		*loadavg = (double)temp/FSCALE;
 	}
 #else /* else not UTEK or sequent or alliant or SVR4 or sgi or hcx */
-#     if defined(sony) && OSMAJORVERSION == 4
-#      ifdef mips
-	{
-		fix temp;
-		(void) read(kmem, (char *)&temp, sizeof(fix));
-		*loadavg = FIX_TO_DBL(temp);
-	}
-#      else /* not mips */
-	{
-		long temp;
-		(void) read(kmem, (char *)&temp, sizeof(long));
-		*loadavg = (double)temp/FSCALE;
-	}
-#      endif /* mips */
-#     else /* not sony NEWSOS4 */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
-#     endif /* sony NEWOS4 */
 #endif /* SVR4 or ... else */
 	return;
 }
