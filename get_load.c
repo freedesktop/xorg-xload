@@ -118,14 +118,6 @@ void GetLoadPoint(
 #include <sys/param.h>
 #endif
 
-#ifdef sequent
-#include <sys/vm.h>
-#endif /* sequent */
-
-#ifdef sequent
-#define FSCALE	1000.0
-#endif
-
 #ifdef sgi
 #define FSCALE	1024.0
 #endif
@@ -535,10 +527,6 @@ void GetLoadPoint(w, closure, call_data)
 #define KERNEL_FILE "/hp-ux"
 #endif /* hpux */
 
-#ifdef sequent
-#define KERNEL_FILE "/dynix"
-#endif /* sequent */
-
 #ifdef sgi
 #if (OSMAJORVERSION > 4)
 #define KERNEL_FILE "/unix"
@@ -652,13 +640,13 @@ void GetLoadPoint( w, closure, call_data )
 
 	(void) lseek(kmem, loadavg_seek, 0);
 
-#if defined(sequent) || defined(SVR4) || defined(sgi) || (BSD >= 199103)
+#if defined(SVR4) || defined(sgi) || (BSD >= 199103)
 	{
 		long temp;
 		(void) read(kmem, (char *)&temp, sizeof(long));
 		*loadavg = (double)temp/FSCALE;
 	}
-#else /* else not sequent or SVR4 or sgi */
+#else /* else not SVR4 or sgi or BSD */
 	(void) read(kmem, (char *)loadavg, sizeof(double));
 #endif /* SVR4 or ... else */
 	return;
