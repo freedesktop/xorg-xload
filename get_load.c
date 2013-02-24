@@ -140,10 +140,6 @@ void GetLoadPoint(
 #endif
 #endif
 
-#ifdef X_NOT_POSIX
-extern long lseek();
-#endif
-
 static void xload_error(const char *, const char *) _X_NORETURN;
 
 
