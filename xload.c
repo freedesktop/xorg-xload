@@ -60,7 +60,7 @@ from the X Consortium.
 #endif
 
 #include <errno.h>
-#include <stdio.h> 
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <X11/Intrinsic.h>
@@ -93,7 +93,7 @@ static void SetLights(XtPointer data, XtIntervalId *timer);
 
 /*
  * Command line options table.  Only resources are entered here...there is a
- * pass over the remaining options after XtParseCommand is let loose. 
+ * pass over the remaining options after XtParseCommand is let loose.
  */
 
 static XrmOptionDescRec options[] = {
@@ -205,10 +205,10 @@ main(int argc, char **argv)
 
     if (argc != 1) usage();
 
-    XtGetApplicationResources( toplevel, (XtPointer) &resources, 
+    XtGetApplicationResources( toplevel, (XtPointer) &resources,
 			      my_resources, XtNumber(my_resources),
 			      NULL, (Cardinal) 0);
-    
+
     if (resources.use_lights)
     {
 	char	    name[1024];
@@ -240,47 +240,47 @@ main(int argc, char **argv)
     	XtAppAddActions (app_con, xload_actions, XtNumber(xload_actions));
     	XtOverrideTranslations(toplevel,
 		    	XtParseTranslationTable ("<Message>WM_PROTOCOLS: quit()"));
-    
+
     	XtSetArg (args[0], XtNiconPixmap, &icon_pixmap);
     	XtGetValues(toplevel, args, ONE);
     	if (icon_pixmap == None) {
-	    XtSetArg(args[0], XtNiconPixmap, 
+	    XtSetArg(args[0], XtNiconPixmap,
 		     XCreateBitmapFromData(XtDisplay(toplevel),
 				       	   XtScreen(toplevel)->root,
 				       	   (char *)xload_bits,
 				       	   xload_width, xload_height));
 	    XtSetValues (toplevel, args, ONE);
     	}
-    
+
     	if (resources.show_label) {
       	  pane = XtCreateManagedWidget ("paned", panedWidgetClass,
 				    	toplevel, NULL, ZERO);
-    
+
       	  label_wid = XtCreateManagedWidget ("label", labelWidgetClass,
 					     pane, NULL, ZERO);
-      	  
+
       	  XtSetArg (args[0], XtNlabel, &label);
       	  XtGetValues(label_wid, args, ONE);
-      	  
+
       	  if ( strcmp("label", label) == 0 ) {
 	    (void) XmuGetHostname (host, 255);
 	    XtSetArg (args[0], XtNlabel, host);
 	    XtSetValues (label_wid, args, ONE);
       	  }
-    
+
       	  load_parent = pane;
     	}
     	else
       	  load_parent = toplevel;
-    
+
     	load = XtCreateManagedWidget ("load", stripChartWidgetClass,
-				      load_parent, NULL, ZERO);    
-    
+				      load_parent, NULL, ZERO);
+
     	if (resources.remote)
 	  XtAddCallback(load, XtNgetValue, GetRLoadPoint, NULL);
-	else 
+	else
 	  XtAddCallback(load, XtNgetValue, GetLoadPoint, NULL);
-	
+
     	XtRealizeWidget (toplevel);
     	wm_delete_window = XInternAtom (XtDisplay(toplevel), "WM_DELETE_WINDOW",
 				    	False);
@@ -316,7 +316,7 @@ SetLights (XtPointer data, XtIntervalId *timer)
 
     toplevel = (Widget) data;
     dpy = XtDisplay (toplevel);
-    if (resources.remote) 
+    if (resources.remote)
       GetRLoadPoint (toplevel, (XtPointer) 0, (XtPointer) &value);
     else
       GetLoadPoint (toplevel, (XtPointer) 0, (XtPointer) &value);

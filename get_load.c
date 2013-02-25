@@ -67,7 +67,7 @@ static long (__stdcall *pdhopen)(LPCSTR, DWORD, HANDLE);
 static long (__stdcall *pdhaddcounter)(HANDLE, LPCSTR, DWORD, HANDLE*);
 static long (__stdcall *pdhcollectquerydata)(HANDLE);
 static long (__stdcall *pdhgetformattedcountervalue)(HANDLE, DWORD, LPDWORD, COUNTER*);
-#define CYGWIN_PERF 
+#define CYGWIN_PERF
 void InitLoadPoint(void)
 {
   long ret;
@@ -84,7 +84,7 @@ void InitLoadPoint(void)
   ret = pdhopen( NULL , 0, &query );
   if (ret!=0) exit(-1);
   ret = pdhaddcounter(query, "\\Processor(_Total)\\% Processor Time", 0, &counter);
-  if (ret!=0) exit(-1);  
+  if (ret!=0) exit(-1);
 }
 void GetLoadPoint(
      Widget  w,              /* unused */
@@ -198,7 +198,7 @@ void InitLoadPoint()				/* SYSV386 version */
 
     nlist( KERNEL_FILE, namelist);
 
-    for (i=0; namelist[i].n_name; i++) 
+    for (i=0; namelist[i].n_name; i++)
 	if (namelist[i].n_value == 0)
 	    xload_error("cannot get name list from", KERNEL_FILE);
 
@@ -213,11 +213,11 @@ void InitLoadPoint()				/* SYSV386 version */
 
     if ((p=(struct proc *)malloc(v.v_proc*sizeof(*p))) == NULL)
 	xload_error("cannot allocat space for", PROC_NAME);
-	  
+
     first_buf = (XtPointer) namelist[2].n_value;
     last_buf  = (char *)first_buf + v.v_buf * sizeof(struct buf);
 }
-	
+
 /* ARGSUSED */
 void GetLoadPoint( w, closure, call_data )	/* SYSV386 version */
 Widget	w;		/* unused */
@@ -227,7 +227,7 @@ XtPointer	call_data;	/* pointer to (double) return value */
     double *loadavg = (double *)call_data;
     static double avenrun = 0.0;
     int i, nproc, size;
-	
+
     (void) lseek(kmem, namelist[0].n_value, 0);
     (void) read(kmem, &v, sizeof(v));
 
@@ -236,7 +236,7 @@ XtPointer	call_data;	/* pointer to (double) return value */
     (void) lseek(kmem, namelist[1].n_value, 0);
     (void) read(kmem, p, size * sizeof(struct proc));
 
-    for (nproc = 0, i=0; i<size; i++) 
+    for (nproc = 0, i=0; i<size; i++)
 	  if ((p[i].p_stat == SRUN) ||
 	      (p[i].p_stat == SIDL) ||
 	      (p[i].p_stat == SXBRK) ||
@@ -295,12 +295,12 @@ void GetLoadPoint(
 	      while ((dp = memchr(buf,'.',sizeof(buf)-1)) != NULL) {
 		  *(char *)dp = ldp;
 	      }
-	  
+
 #endif
 	  if (sscanf(buf, "%lf", (double *)call_data) == 1)
 	      return;
       }
-      
+
 
       *(double *)call_data = 0.0;     /* temporary hiccup */
 
