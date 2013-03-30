@@ -297,9 +297,9 @@ static unsigned long	current_leds;
 static void
 ClearLights (Display *dpy)
 {
-    XKeyboardControl	cntrl;
-
-    cntrl.led_mode = LedModeOff;
+    XKeyboardControl	cntrl = {
+	.led_mode = LedModeOff
+    };
     XChangeKeyboardControl (dpy, KBLedMode, &cntrl);
     current_leds = 0;
 }
@@ -312,7 +312,6 @@ SetLights (XtPointer data, XtIntervalId *timer)
     double		value;
     unsigned long	new_leds, change, bit;
     int			i;
-    XKeyboardControl	cntrl;
 
     toplevel = (Widget) data;
     dpy = XtDisplay (toplevel);
@@ -328,8 +327,10 @@ SetLights (XtPointer data, XtIntervalId *timer)
     {
 	if (change & bit)
 	{
-	    cntrl.led = i;
-	    cntrl.led_mode = new_leds & bit ? LedModeOn : LedModeOff;
+	    XKeyboardControl	cntrl = {
+		.led = i,
+		.led_mode = new_leds & bit ? LedModeOn : LedModeOff
+	    };
 	    XChangeKeyboardControl (dpy, KBLed|KBLedMode, &cntrl);
 	    current_leds ^= bit;
 	}
