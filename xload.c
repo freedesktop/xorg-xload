@@ -139,7 +139,8 @@ static int light_update = 10 * 1000;
  * Exit with message describing command line format.
  */
 
-static void usage(void)
+static void _X_NORETURN
+usage(void)
 {
     fprintf (stderr, gettext("usage:  %s [-options ...]\n\n%s\n"),
              ProgramName, gettext(
