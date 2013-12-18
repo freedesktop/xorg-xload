@@ -50,7 +50,7 @@ from the X Consortium.
 
 #if defined(__CYGWIN__)
 # define WIN32_LEAN_AND_MEAN
-# include <windows.h>
+# include <X11/Xwindows.h>
 typedef struct {
   DWORD stat;
   union {
